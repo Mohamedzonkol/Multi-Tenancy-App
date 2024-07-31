@@ -17,6 +17,25 @@
             base.OnModelCreating(modelBuilder);
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            var tenentConnentionString = _tenantServices.GetConnectionString();
+            if (!string.IsNullOrEmpty(tenentConnentionString))
+            {
+                var dbProvider = _tenantServices.GetDatabaseProvider();
+                if (dbProvider?.ToLower() == "mssql")
+                {
+                    optionsBuilder.UseSqlServer(tenentConnentionString);
+                }
+                //else if(dbProvider=="MySQL")
+                //{
+                //    optionsBuilder.UseMySql(tenentConnentionString, ServerVersion.AutoDetect(tenentConnentionString));
+                //}
+            }
+
+            base.OnConfiguring(optionsBuilder);
+        }
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             foreach (var entry in ChangeTracker.Entries<IMustHaveTenant>().Where(x => x.State == EntityState.Added))
