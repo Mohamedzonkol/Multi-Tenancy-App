@@ -1,19 +1,12 @@
-
-
+using MultiTenancy.API;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-builder.Services.Configure<TenantSettings>(builder.Configuration.GetSection("TenantSettings"));
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddScoped<ITenantServices, TenantServices>();
 
-TenantSettings options = new();
-builder.Configuration.GetSection(nameof(TenantSettings)).Bind(options);
+builder.Services.AddMultiTenancy(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
