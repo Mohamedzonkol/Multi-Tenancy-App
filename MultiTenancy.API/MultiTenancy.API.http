@@ -1,6 +1,18 @@
-@MultiTenancy.API_HostAddress = http://localhost:5107
+@host = https://localhost:7257
 
-GET {{MultiTenancy.API_HostAddress}}/weatherforecast/
-Accept: application/json
-
+GET {{host}}/api/product
+tenant: tenant2
 ###
+GET {{host}}/api/product/1
+tenant: tenant1
+###
+
+POST {{host}}/api/Product
+tenant: tenant2
+Content-Type: application/json
+
+{
+  "Name": "Product 1 - telant1",
+  "Description": "My telant1 product - 1",
+  "Rate": 5
+}
