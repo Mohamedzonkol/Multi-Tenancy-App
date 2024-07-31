@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddMultiTenancy(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
