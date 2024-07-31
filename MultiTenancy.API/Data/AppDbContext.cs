@@ -5,10 +5,10 @@
         public string TenantId { get; set; }
         private readonly ITenantServices _tenantServices;
 
-        public AppDbContext(DbContextOptions options, ITenantServices tenantServices) : base(options)
+        public AppDbContext(DbContextOptions<AppDbContext> options, ITenantServices tenantServices) : base(options)
         {
             _tenantServices = tenantServices;
-            TenantId = _tenantServices.GetTenant()!.TenantId;
+            TenantId = _tenantServices.GetTenant()?.TenantId;
         }
         public DbSet<Product> Products { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -32,8 +32,6 @@
                 //    optionsBuilder.UseMySql(tenentConnentionString, ServerVersion.AutoDetect(tenentConnentionString));
                 //}
             }
-
-            base.OnConfiguring(optionsBuilder);
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())

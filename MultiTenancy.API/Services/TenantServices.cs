@@ -4,14 +4,15 @@ namespace MultiTenancy.API.Services
 {
     public class TenantServices : ITenantServices
     {
-        private readonly IOptions<TenantSettings> _tenantSettings;
-        private Tenant? _currentTenant;
+        private readonly TenantSettings _tenantSettings;
         private HttpContext? _httpContext;
+        private Tenant? _currentTenant;
 
         public TenantServices(IOptions<TenantSettings> tenantSettings, IHttpContextAccessor httpContextAccessor)
         {
-            _tenantSettings = tenantSettings;
             _httpContext = httpContextAccessor.HttpContext;
+            _tenantSettings = tenantSettings.Value;
+
             if (_currentTenant is not null)
             {
                 if (_httpContext.Request.Headers.TryGetValue("tenant", out var tenantId))
@@ -25,14 +26,17 @@ namespace MultiTenancy.API.Services
             }
         }
 
-        public string GetDatabaseProvider()
+        public string? GetDatabaseProvider()
         {
-            return _tenantSettings.Value.Defaults.DbProvider;
+            return _tenantSettings.Defaults.DbProvider;
         }
 
-        public string GetConnectionString()
+        public string? GetConnectionString()
         {
-            return _currentTenant.ConnectionString ?? _tenantSettings.Value.Defaults.ConnectionString;
+            var currentConnectionString = _currentTenant is null
+                ? _tenantSettings.Defaults.ConnectionString
+                : _currentTenant.ConnectionString;
+            return currentConnectionString;
         }
 
         public Tenant GetTenant()
@@ -41,14 +45,14 @@ namespace MultiTenancy.API.Services
         }
         private void SetCurrentTenant(string tenantId)
         {
-            _currentTenant = _tenantSettings.Value.Tenants.FirstOrDefault(x => x.TenantId == tenantId);
+            _currentTenant = _tenantSettings.Tenants.FirstOrDefault(x => x.TenantId == tenantId);
             if (_currentTenant is null)
             {
                 throw new Exception("Tenant not found");
             }
             if (string.IsNullOrEmpty(_currentTenant.ConnectionString))
             {
-                _currentTenant.ConnectionString = _tenantSettings.Value.Defaults.ConnectionString;
+                _currentTenant.ConnectionString = _tenantSettings.Defaults.ConnectionString;
 
             }
         }
