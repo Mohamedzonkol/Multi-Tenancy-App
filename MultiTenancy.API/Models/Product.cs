@@ -1,6 +1,4 @@
-﻿using MultiTenancy.API.Contracts;
-
-namespace MultiTenancy.API
+﻿namespace MultiTenancy.API
 {
     public class Product : IMustHaveTenant
     {

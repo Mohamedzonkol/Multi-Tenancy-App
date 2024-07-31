@@ -1,0 +1,1 @@
+﻿global using MultiTenancy.API.Contracts;
