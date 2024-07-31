@@ -1,9 +1,10 @@
-using MultiTenancy.API.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.Configure<TenantSettings>(builder.Configuration.GetSection("TenantSettings"));
+TenantSettings options = new();
+builder.Configuration.GetSection(nameof(TenantSettings)).Bind(options);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
